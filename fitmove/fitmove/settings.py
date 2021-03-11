@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,20 +24,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '$(&_2d_ih+@1(l!2i7!+pbhnn^8f1a=ut0_xkiv(cbve5hguc!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['15.206.117.85']
+# ALLOWED_HOSTS = ['15.206.117.85']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'video',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +58,7 @@ ROOT_URLCONF = 'fitmove.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,6 +70,8 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = 'fitmove.asgi.application'
 
 WSGI_APPLICATION = 'fitmove.wsgi.application'
 
@@ -118,3 +124,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+   }
+}
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = 'staticfiles'
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, "static"),
+# )
