@@ -7,14 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.1/howto/deployment/wsgi/
 """
 
-import os, sys
-
-# add the hellodjango project path into the sys.path
-sys.path.append('/home/ubuntu/Kontiki/fitmove')
-
-# add the virtualenv site-packages path to the sys.path
-sys.path.append('/home/ubuntu/Kontiki/venv/Lib/site-packages')
-
+import os
 
 from django.core.wsgi import get_wsgi_application
 
