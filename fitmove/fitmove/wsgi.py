@@ -8,7 +8,6 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/wsgi/
 """
 
 import os, sys
-from django.core.wsgi import get_wsgi_application
 
 # add the hellodjango project path into the sys.path
 sys.path.append('/home/ubuntu/Kontiki/fitmove')
@@ -17,6 +16,7 @@ sys.path.append('/home/ubuntu/Kontiki/fitmove')
 sys.path.append('/home/ubuntu/Kontiki/venv/Lib/site-packages')
 
 
+from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fitmove.settings')
 
