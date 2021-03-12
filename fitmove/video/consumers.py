@@ -34,7 +34,7 @@ class ChatConsumer(WebsocketConsumer):
         # other_channel = k if k not in
         # print(self.room_group_name)
         other_channel = ''
-        for k in list(self.channel_layer.group_channels[self.room_group_name].keys()):
+        for k in list(self.channel_layer.groups[self.room_group_name].keys()):
             # name = k.split('!')[-1]
             # print("================")
             # print(name)

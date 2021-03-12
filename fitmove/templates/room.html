@@ -60,7 +60,7 @@
   
   .input_video {
       
-    display: none;
+    /* display: none; */
     position:relative;
     top: 0;
     left: 0;
@@ -82,6 +82,8 @@
     width: 50vw;
     left: 0;
     top: 0;
+    z-index: -1;
+
   }
 
   .output_canvas_second {
@@ -90,6 +92,7 @@
     width: 50vw;
     left: 0;
     top: 0;
+    z-index: -1;
   }
   
   .logo {
@@ -116,6 +119,20 @@
     top: 10px;
   }
   
+  .camera{
+
+    background-color: royalblue;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 20px;
+    z-index: 1;
+  }
+
+  
+
   .loading {
     display: flex;
     position: absolute;
@@ -161,18 +178,23 @@
 
 <body>
 
+  <!-- <button>kk</button> -->
+
     {{ room_name|json_script:"room-name" }}
+    <h1 style="color: black;">{{ name }}</h1>
 
     <div class="container">
+
+      <!-- <button class='camera' onclick="toggleCamera()">Toggle Camera</button> -->
 
        <video class="input_video"></video>
 
         <canvas class="output_canvas" ></canvas>
-        <div class="loading">
-        <div class="spinner"></div>
-        <div class="message">
+        <!-- <div class="loading">
+        <div class="spinner"></div> -->
+        <!-- <div class="message">
             Loading
-        </div>
+        </div> -->
         </div>
     
         
@@ -182,11 +204,11 @@
         <video class="second_video"></video>
 
         <canvas class="output_canvas_second" ></canvas>
-        <div class="loading">
-        <div class="spinner"></div>
-        <div class="message">
+        <!-- <div class="loading">
+        <div class="spinner"></div> -->
+        <!-- <div class="message">
             Loading
-        </div>
+        </div> -->
         </div>
     
         
@@ -194,6 +216,11 @@
     <div class="control-panel"></div>
 
     <script>
+
+        // function toggleCamera() {
+        //   camera.sleep;
+        //   console.log("Click")
+        // }
 
         // Our input frames will come from here.
         const videoElement = document.getElementsByClassName('input_video')[0];
@@ -215,7 +242,7 @@
             + roomName
             + '/'
         );
-        console.log(chatSocket)       
+        // console.log(chatSocket)       
  
         function sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
@@ -223,145 +250,62 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            count += 1;
-            console.log(data.message)
 
-            canvasCtxSecond.beginPath();
             console.log("Message Incoming");
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+            canvasCtxSecond.save();
+
+            canvasCtxSecond.clearRect(0, 0, canvasElementSecond.width, canvasElementSecond.height)
+            console.log("cleared")
+            chatSocket.onopen = () => {
+            // console.log("Connection Established");
+            }
+
+            
             
 
             drawConnectors(
                 canvasCtxSecond, data.message, POSE_CONNECTIONS,
                 {color: '#ffffff', lineWidth: 2});
-        
-            // canvasCtxSecond.stroke();
-            
-            // canvasCtxSecond.clearRect(0, 0, canvasElementSecond.width, canvasElementSecond.height)
+            canvasCtx.restore();
+            canvasCtxSecond.restore();
 
-            // console.log(data)
         };
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
- 
-
-        // console.log(canvasCtx)
-        // console.log(canvasCtxSecond)
-
-
-        // We'll add this to our control panel later, but we'll save it here so we can
-        // call tick() each time the graph runs.
-        // const fpsControl = new FPS();
 
         // Optimization: Turn off animated spinner after its hiding animation is done.
-        const spinner = document.querySelector('.loading');
-        spinner.ontransitionend = () => {
-        spinner.style.display = 'none';
-        };
+        // const spinner = document.querySelector('.loading');
+        // spinner.ontransitionend = () => {
+        // spinner.style.display = 'none';
+        // };
 
-        // function find_angle(A,B,C) {
-        //     var AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
-        //     var BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
-        //     var AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
-        //     return Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
-        // }
-
-        var count = 0;
+        // var count = 0;
         // var f = 1;
 
         function onResults(results) {
 
-        // Hide the spinner.
-        document.body.classList.add('loaded');
-        //   console.log(results.poseLandmarks)
+            // Hide the spinner.
+            // document.body.classList.add('loaded');
 
-        // Update the frame rate.
-        //   fpsControl.tick();
-
-        // Draw the overlays.
-        // console.log(results)
-        canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-        canvasCtx.drawImage(
-            results.image, 0, 0, canvasElement.width, canvasElement.height);
-        
-        // console.log(canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height))
-
-        canvasCtxSecond.save();
-
-        canvasCtxSecond.clearRect(0, 0, canvasElementSecond.width, canvasElementSecond.height)
-
-        
-        // canvasCtxSecond.drawImage(
-        //     results.image, 0, 0, canvasElementSecond.width, canvasElementSecond.height);
-        // console.log(canvasCtxSecond.clearRect(0, 0, canvasElementSecond.width, canvasElementSecond.height));
-
-
-        // var angleRight  = find_angle(results.poseLandmarks[23],results.poseLandmarks[25],results.poseLandmarks[27])*180/Math.PI
-        // var angleLeft = find_angle(results.poseLandmarks[24],results.poseLandmarks[26],results.poseLandmarks[28])*180/Math.PI
-        
-        // if ( (angleRight >= 170  && angleLeft >= 170 ) && f == 1 ){
-        //     count += 1;  
-        //     f = 0;
-        //     console.log("Flgged")
-        // }
-
-
-        // console.log(results.poseLandmarks)
-        // if ( (angleRight >= 70 && angleRight <=110) && (angleLeft >= 70 && angleLeft <= 110) ){
-            // drawConnectors(
-            //     canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
-            //     {color: '#ffffff', lineWidth: 2});
-
-            chatSocket.onopen = () => {
-	    	console.log("Connection Established");
-	    }
-	   
-	   if (chatSocket.readyState == 1){
-		console.log("Sending message...");
-	   	chatSocket.send(JSON.stringify({
-                        'points': results.poseLandmarks,
-                }));
-
-           } 
-
-                // console.log(angleRight)
-                // console.log(angleLeft)
-        //     f = 1;
             
-
-        // }
-        // else{
-        //     drawConnectors(
-        //         canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
-        //         {color: '#ffffff'});
-            
-
-        // }
-        canvasCtx.fillStyle = "blue";
-        canvasCtx.font = "bold 16px Arial";
-        // canvasCtx.fillText("AngleRight = " + angleRight, 20, 60);
-        // canvasCtx.fillText("AngleLeft = " + angleLeft, 20, 80);
         
-        // console.log(count)
-        // canvasCtx.fillText("Count = " + (count - 1), 20, 100);
+            if (chatSocket.readyState == 1){
+              console.log("Sending message...");
+              chatSocket.send(JSON.stringify({
+                'points': results.poseLandmarks,
+              }));
 
+            } 
 
-        
-        // drawLandmarks(
-        //     canvasCtx, results.poseLandmarks,
-        //     {color: '#00FF00', fillColor: '#FF0000', lineWidth: 1, radius: 1});
-        canvasCtx.restore();
-        canvasCtxSecond.restore();
-
-
-
-
-
-        }
+   
+       }
 
         const pose = new Pose({locateFile: (file) => {
             // console.log(file);
@@ -375,17 +319,13 @@
         const camera = new Camera(videoElement, {
         
         onFrame: async () => {
-            // console.log("Await start");
 
             await pose.send({image: videoElement});
             await sleep(30)
             
-            // console.log("Await end");
         },
-        // width: 1280,
-        // height: 720
+
         });
-        // console.log("Camera start");
 
         camera.start();
 
