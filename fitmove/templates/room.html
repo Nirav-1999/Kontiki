@@ -209,13 +209,14 @@
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
         const chatSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
-            + '/ws/video/'
+            + ':8001/ws/video/'
             + roomName
             + '/'
         );
-
+        console.log(chatSocket)       
+ 
         function sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
         }
@@ -226,7 +227,7 @@
             console.log(data.message)
 
             canvasCtxSecond.beginPath();
-            
+            console.log("Message Incoming");
             
 
             drawConnectors(
@@ -315,9 +316,18 @@
             //     canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
             //     {color: '#ffffff', lineWidth: 2});
 
-            chatSocket.send(JSON.stringify({
-                'points': results.poseLandmarks,
-            }));
+            chatSocket.onopen = () => {
+	    	console.log("Connection Established");
+	    }
+	   
+	   if (chatSocket.readyState == 1){
+		console.log("Sending message...");
+	   	chatSocket.send(JSON.stringify({
+                        'points': results.poseLandmarks,
+                }));
+
+           } 
+
                 // console.log(angleRight)
                 // console.log(angleLeft)
         //     f = 1;
